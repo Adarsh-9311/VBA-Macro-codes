@@ -1,0 +1,38 @@
+Sub CopyFilesToWorkbook()
+    Dim sourceFolder As String
+    Dim file As String
+    Dim destinationWorkbook As Workbook
+    Dim destinationWorksheet As Worksheet
+    Dim nextRow As Long
+    
+    ' Set the source folder path
+    sourceFolder = "C:\Path\to\your\folder"
+    
+    ' Set the destination workbook and worksheet
+    Set destinationWorkbook = ActiveWorkbook
+    Set destinationWorksheet = destinationWorkbook.ActiveSheet
+    
+    ' Initialize the next available row in the destination worksheet
+    nextRow = 1
+    
+    ' Loop through all files in the source folder
+    file = Dir(sourceFolder & "\*.*")
+    Do While file <> ""
+        ' Copy each file to the destination worksheet
+        Workbooks.Open (sourceFolder & "\" & file)
+        ActiveWorkbook.Sheets(1).UsedRange.Copy destinationWorksheet.Cells(nextRow, 1)
+        ActiveWorkbook.Close SaveChanges:=False
+        
+        ' Update the next available row in the destination worksheet
+        nextRow = destinationWorksheet.Cells(Rows.Count, 1).End(xlUp).Row + 1
+        
+        ' Move to the next file in the source folder
+        file = Dir
+    Loop
+    
+    ' Cleanup
+    Set destinationWorksheet = Nothing
+    Set destinationWorkbook = Nothing
+    
+    MsgBox "Files copied successfully!", vbInformation
+End Sub
